@@ -1,7 +1,9 @@
 # Bucket to store website
-
+resource "random_id" "bucket_prefix" {
+  byte_length = 8
+}
 resource "google_storage_bucket" "website" {
-  name     = "${var.project_name}-${var.env}-website"
+  name     = "${random_id.bucket_prefix.hex}-${var.env}-website"
   location = var.gcp_region
   website {
     main_page_suffix = "index.html"
@@ -33,7 +35,7 @@ resource "google_storage_bucket_object" "statis_site_src_404" {
 ###################################################
 # Reserving a static external IP address
 resource "google_compute_global_address" "website_ip" {
-  name = "${var.project_name}-${var.env}-website-ip"
+  name = "lb-${var.env}-website-ip"
 }
 
 # created manually in GCP console, we just fetch
@@ -68,10 +70,9 @@ resource "google_compute_managed_ssl_certificate" "website_cert" {
 # URL Map for HTTP → HTTPS Redirect
 resource "google_compute_url_map" "http_redirect_map" {
   name = "http-redirect-map"
-
   default_url_redirect {
     https_redirect         = true
-    strip_query            = true
+    strip_query            = false
     redirect_response_code = "MOVED_PERMANENTLY_DEFAULT"
   }
 }

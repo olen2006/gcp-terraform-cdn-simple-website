@@ -13,10 +13,7 @@ variable "gcp_svc_key" {
   type        = string
 }
 
-variable "project_name" {
-  description = "Project Name"
-  type        = string
-}
+
 variable "env" {
   description = "Environment"
   type        = string
