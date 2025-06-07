@@ -26,6 +26,39 @@ Before using this Terraform configuration, ensure you have the following:
 
 ---
 
+## Required IAM Roles
+
+Ensure the service account used for Terraform (`terraform-gcp@<project-id>.iam.gserviceaccount.com`) has the following IAM roles assigned at the **project level**:
+
+| IAM Role                        | Purpose                                                |
+|----------------------------------|--------------------------------------------------------|
+| `roles/storage.admin`            | Manage Cloud Storage buckets and objects              |
+| `roles/dns.admin`                | Manage Cloud DNS zones and records                    |
+| `roles/compute.networkAdmin`     | Manage load balancers, URL maps, and forwarding rules |
+| `roles/compute.securityAdmin`    | Manage SSL certificates and HTTPS proxies             |
+
+### Assigning IAM Roles
+
+Use the `gcloud` CLI to assign each role:
+
+```bash
+gcloud projects add-iam-policy-binding <project-id> \
+  --member="serviceAccount:terraform-gcp@<project-id>.iam.gserviceaccount.com" \
+  --role="roles/storage.admin"
+
+gcloud projects add-iam-policy-binding <project-id> \
+  --member="serviceAccount:terraform-gcp@<project-id>.iam.gserviceaccount.com" \
+  --role="roles/dns.admin"
+
+gcloud projects add-iam-policy-binding <project-id> \
+  --member="serviceAccount:terraform-gcp@<project-id>.iam.gserviceaccount.com" \
+  --role="roles/compute.networkAdmin"
+
+gcloud projects add-iam-policy-binding <project-id> \
+  --member="serviceAccount:terraform-gcp@<project-id>.iam.gserviceaccount.com" \
+  --role="roles/compute.securityAdmin"
+```
+
 ## Manual Steps
 
 ### 1. Create a Public DNS Zone in Google Cloud DNS
